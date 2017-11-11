@@ -14,7 +14,7 @@ function Matrix:create(x,y,z)
 	-- to be filled
 		--[[			m
 					-------------
-					|			|	n
+				n	|			|
 					|			|
 					-------------
 
@@ -291,6 +291,24 @@ function Matrix:takeVec(y,z)
 	end
 	print("Matrix takeVec: makes no sense")
 	return nil
+end
+
+function Matrix:takeDia()
+	return self:takeDiagonal()
+end
+function Matrix:takeDiagonal()
+	local n
+	if self.n > self.m then
+		n = self.m
+	else
+		n = self.n
+	end
+
+	local c = Vec:create(n)
+	for i = 1,n do
+		c[i] = self[i][i]
+	end
+	return c
 end
 
 -- exchange row/col

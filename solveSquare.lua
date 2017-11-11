@@ -108,6 +108,8 @@ function solveSquare(uv,_L,camera,distort)
 	B = -B
 	local AB = A:link(B,"col")
 	local res,exc,success = AB:dia()
+	local Ks = res:takeDia()
+	local Zs = res:takeVec(9,"col")
 	
 	---[[ print check A and B
 	print("A=",A)
@@ -116,6 +118,8 @@ function solveSquare(uv,_L,camera,distort)
 	print("res=",res)
 	print("exc=",exc)
 	print("success=",success)
+	print("Ks = ",Ks)
+	print("Zs = ",Zs)
 	--]]
 
 	return 0
