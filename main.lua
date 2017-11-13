@@ -8,12 +8,12 @@ uv[3] = {x = -a, y = -a}
 uv[4] = {x = a, y = -a}
 
 local ku,kv,u0,v0
-ku = 3
+ku = 4
 kv = 4
 --u0 = 4
 --v0 = 4
-u0 = 0
-v0 = 0
+u0 = 1
+v0 = 1
 
 local c = Mat:create{
 		{ku,	0,	u0},

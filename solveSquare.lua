@@ -1,4 +1,5 @@
 Vec = require("Vector")
+Vec3 = require("Vector3")
 Mat = require("Matrix")
 
 function solveSquare(uv,_L,camera,distort)
@@ -13,6 +14,7 @@ function solveSquare(uv,_L,camera,distort)
 		camera is a Matrix3/Matrix, or a {ku,kv,u0,v0}
 	--]]
 
+	---------------------- undistort -----------------------------
 	-- undistort
 		-- to be filled
 	if distort ~= nil then
@@ -20,9 +22,11 @@ function solveSquare(uv,_L,camera,distort)
 		-- solveSquare(newuv,L,newcamera)
 	end
 
+	---------------------- prepare -----------------------------
 	local ku,kv,u0,v0
 	local u1,v1,u2,v2,u3,v3,u4,v4
 	local L = _L
+	local hL = _L / 2
 
 	-- get ku,kv,u0,v0
 	if type(camera) == "table" then
@@ -73,8 +77,8 @@ function solveSquare(uv,_L,camera,distort)
 	--]]
 
 	----------------------------------------------------------
-	-- now we have ku kv u0 v0, and u* v*, and L 
 	-- trick starts
+	-- now we have ku kv u0 v0, and u* v*, and L 
 	local A = Mat:create(8,8,
 		-- 	x		y (z)	a		b		c		p		q		r
 		{ {	-ku,	0,		-ku,	0,		u1-u0,	-ku,	0,		u1-u0	},
@@ -89,10 +93,6 @@ function solveSquare(uv,_L,camera,distort)
 		  {	-ku,	0,		ku,		0,	  -(u4-u0),	-ku,	0,		u4-u0	},
 		  {	0,		-kv,	0,		kv,	  -(v4-v0),	0,		-kv,	v4-v0	},
 		})
-	--A = A:exc(1,5,"col")
-		-- c,y,a,b,x,p,q,r
-	--A = A:exc(3,8,"col")
-		-- c,y,r,b,x,p,q,a
 
 	local B = Vec:create(8,{ 
 		--	z
@@ -121,6 +121,59 @@ function solveSquare(uv,_L,camera,distort)
 	print("Ks = ",Ks)
 	print("Zs = ",Zs)
 	--]]
+
+	------------ no solution --------------------
+	if success == false then
+		-- to be filled
+		return nil -- ?
+	end
+	---------------------------------------------
+	local a,b,c,p,q,r,x,y,z
+
+	x = Zs[1] / Ks[1]
+	y = Zs[2] / Ks[2]
+	a = Zs[3] / Ks[3]
+	b = Zs[4] / Ks[4]
+	c = Zs[5] / Ks[5]
+	p = Zs[6] / Ks[6]
+	q = Zs[7] / Ks[7]
+	r = Zs[8] / Ks[8]
+
+	---- 3 constraints ----
+	-- a^2 + b^2 + c^2 = hL^2
+	local z1 = hL^2 / (a^2 + b^2 + c^2)
+	-- p^2 + q^2 + r^2 = hL^2
+	local z2 = hL^2 / (p^2 + q^2 + r^2)
+	-- ap + bq + cr = 0
+	local constrain = a*p + b*q + c*r
+
+	-- strict should be 0, maybe better have a check
+	z = (z1 + z2) / 2  
+		-- or better be sqrt(z1 * z2)? 
+		-- need to think of geometric significance
+	x = x * z
+	y = y * z
+	a = a * z
+	b = b * z
+	c = c * z
+	p = p * z
+	q = q * z
+	r = r * z
+
+	local loc = Vec3:create(x,y,z)
+	local abc = Vec3:create(a,b,c)
+	local pqr = Vec3:create(p,q,r)
+
+	---[[ print check
+	print("z1 = ",z1)
+	print("z2 = ",z2)
+	print("constrain = ",constrain)
+
+	print("loc = ",loc)
+	print("abc = ",abc)
+	print("pqr = ",pqr)
+	--]]
+	local dir = abc * pqr
 
 	return 0
 end
