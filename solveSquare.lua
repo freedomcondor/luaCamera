@@ -39,7 +39,7 @@ function solveSquare(uv,_L,camera,distort)
 			ku = camera[1]
 			kv = camera[2]
 			u0 = camera[3]
-			u0 = camera[4]
+			v0 = camera[4]
 		end
 	else
 		print("camera parameter wrong")
