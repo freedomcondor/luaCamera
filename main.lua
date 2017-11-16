@@ -21,4 +21,8 @@ local c = Mat:create{
 		{0,		0,	1},
 	}
 
-res = solveSquare(uv,5,c)
+--res = solveSquare(uv,5,c)
+res = solve7add1(	5,ku,kv,u0,v0,	
+					uv[1].x,uv[1].y,uv[2].x,uv[2].y,
+					uv[3].x,uv[3].y,uv[4].x,uv[4].y,
+					8)

@@ -2,6 +2,8 @@ Vec = require("Vector")
 Vec3 = require("Vector3")
 Mat = require("Matrix")
 
+require("solve7add1")
+
 function solveSquare(_uv,_L,camera,distort)
 	--[[
 		uv[1] = {x = **, y = **}

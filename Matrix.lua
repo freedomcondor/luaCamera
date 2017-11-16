@@ -401,7 +401,8 @@ function Matrix:triangle()
 
 	for i = 1, n do
 		local flag = 1
-		if (c[i][i] == 0) then
+		--if (c[i][i] == 0) then
+		if (c[i][i] < 0.000001) and (c[i][i] > -0.000001) then
 			flag = 0
 			for j = i+1, c.n do
 				if c[j][i] ~= 0 then
