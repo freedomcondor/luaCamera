@@ -369,6 +369,16 @@ function Matrix:link(y,z)
 	return nil
 end
 
+function almostZero(x,y)
+	y = y or 5
+	local t = x * (10^y)
+	if -1 < t and t < 1 then
+		return true
+	else
+		return false
+	end
+end
+
 -- triangle
 	--[[
 		make a matrix looks like:
@@ -402,10 +412,12 @@ function Matrix:triangle()
 	for i = 1, n do
 		local flag = 1
 		--if (c[i][i] == 0) then
-		if (c[i][i] < 0.000001) and (c[i][i] > -0.000001) then
+		if almostZero(c[i][i]) then
+			--print("a zero!")
 			flag = 0
 			for j = i+1, c.n do
-				if c[j][i] ~= 0 then
+				if almostZero(c[j][i]) == false then
+				--if c[j][i] ~= 0 then
 					c = c:exc(i,j)
 					excMark = excMark:exc(i,j)
 					flag = 1
@@ -414,15 +426,17 @@ function Matrix:triangle()
 			end
 		end
 		v = c:takeVec(i)
-		for j = i+1, c.n do
-			if (flag == 1) then
-				c = c:addVec(-v * c[j][i] / c[i][i],j)
-			else
-				success = false
+		if (flag == 1) then
+			for j = i+1, c.n do
+				c = c:addVec(-v * (c[j][i] / c[i][i]),j)
 			end
+		else
+			success = false
 		end
+		--print("tri check, step",i,":",c)
 	end
 
+	--print(success)
 	return c, excMark:takeVec(1,"col"), success
 end
 
@@ -460,8 +474,9 @@ function Matrix:diagonal()
 		v = c:takeVec(i)
 		for jj = 1, i-1 do
 			local j = i - jj
-			if (c[i][i] ~= 0) then
-				c = c:addVec(-v * c[j][i] / c[i][i],j)
+			--if (c[i][i] ~= 0) then
+			if almostZero(c[i][i]) == false then
+				c = c:addVec(-v * (c[j][i] / c[i][i]),j)
 			end
 		end
 	end
@@ -490,11 +505,15 @@ function Matrix:__tostring()
 	for i = 1, self.n do
 		if i == 1 then str = str .. "\t[[" else str = str .. "\t [" end
 		for j = 1, self.m do
+			---[[
 			if self[i][j] % 1 ~= 0 then -- not a integer
 				str = str .. string.format("%7.3f",self[i][j])-- .. "\t"
 			else						-- a integer
 				str = str .. string.format("%7d",self[i][j])-- .. "\t"
 			end
+			--]]
+			--str = str .. self[i][j] .. '\t'
+			--str = str .. string.format("%3e",self[i][j]) .. '\t'
 			if j ~= self.m  then str = str .. ","
 							else str = str .. "]" end
 		end

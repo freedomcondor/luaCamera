@@ -33,13 +33,13 @@ function solve7add1(L,ku,kv,u0,v0,u1,v1,u2,v2,u3,v3,u4,v4,flag)
 		  { 0,      -kv,   v4-v0, 	0,      kv,   -(v4-v0), 0,      -kv,    v4-v0   },
 		})
 
-	print("A = ",A)
+	--print("A = ",A)
 	flag = flag or 8
 	A = A:exc(flag,8)
 	A[8] = nil
 	A.n = 7
 
-	print("A = ",A)
+	--print("A = ",A)
 
 	A = A:exc(3,8,"col")
 
